@@ -1,0 +1,108 @@
+ ============================================================
+# EXPERIMENT 1: FIND-S ALGORITHM
+# ============================================================
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+# ------------------------------------------------------------
+# Step 1: Create Training Data
+# ------------------------------------------------------------
+
+data = {
+    'Sky': ['Sunny', 'Sunny', 'Rainy', 'Sunny'],
+    'AirTemp': ['Warm', 'Warm', 'Cold', 'Warm'],
+    'Humidity': ['Normal', 'High', 'High', 'High'],
+    'Wind': ['Strong', 'Strong', 'Strong', 'Strong'],
+    'EnjoySport': ['Yes', 'Yes', 'No', 'Yes']
+}
+
+df = pd.DataFrame(data)
+
+print("Training Data:")
+print(df)
+
+
+# ------------------------------------------------------------
+# Step 2: FIND-S Algorithm
+# ------------------------------------------------------------
+
+attributes = ['Sky', 'AirTemp', 'Humidity', 'Wind']
+
+# Initial hypothesis
+hypothesis = ['ϕ', 'ϕ', 'ϕ', 'ϕ']
+
+# Process training examples
+for i in range(len(df)):
+
+    # Consider only positive examples
+    if df.iloc[i]['EnjoySport'] == 'Yes':
+
+        for j in range(len(attributes)):
+
+            if hypothesis[j] == 'ϕ':
+                hypothesis[j] = df.iloc[i][attributes[j]]
+
+            elif hypothesis[j] != df.iloc[i][attributes[j]]:
+                hypothesis[j] = '?'
+
+
+# ------------------------------------------------------------
+# Step 3: Display Final Hypothesis
+# ------------------------------------------------------------
+
+print("\nFinal Most Specific Hypothesis:")
+print(hypothesis)
+
+print("\nHypothesis Details:")
+
+for attribute, value in zip(attributes, hypothesis):
+    print(attribute, "=", value)
+
+
+# ------------------------------------------------------------
+# Step 4: Create Graph
+# ------------------------------------------------------------
+
+# Convert hypothesis into numerical values for graph
+# Specific value = 1
+# General value (?) = 0.5
+
+graph_values = []
+
+for value in hypothesis:
+
+    if value == '?':
+        graph_values.append(0.5)
+    else:
+        graph_values.append(1)
+
+
+# Create graph
+plt.figure(figsize=(8, 5))
+
+bars = plt.bar(
+    attributes,
+    graph_values
+)
+
+# Add values above bars
+for bar, value in zip(bars, hypothesis):
+
+    plt.text(
+        bar.get_x() + bar.get_width() / 2,
+        bar.get_height() + 0.02,
+        value,
+        ha='center',
+        fontsize=12
+    )
+
+plt.xlabel("Attributes")
+plt.ylabel("Hypothesis Level")
+plt.title("FIND-S Algorithm - Final Hypothesis")
+
+plt.ylim(0, 1.2)
+
+plt.grid(axis='y', linestyle='--', alpha=0.5)
+
+plt.show()/
